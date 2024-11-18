@@ -49,11 +49,19 @@ public class App {
                     wiseWords.put(String.valueOf(sequence), app.new WiseWord(words, writer));
                     System.out.println(sequence + "번 명언이 등록되었습니다.");
                 } else if (operation.equals("목록")) {
+                    System.out.println("번호 / 작가 / 명언");
+                    System.out.println("----------------------");
+
                     for (Entry <String, WiseWord> entry : wiseWords.entrySet()) {
                         String number = entry.getKey();
                         WiseWord wiseWord = entry.getValue();
                         System.out.println(number + " / " + wiseWord.getWriter() + " / " + wiseWord.getWords());
                     }
+                } else if (operation.startsWith("삭제")) {
+                    Integer eqIndex = operation.indexOf("=");
+                    String number = operation.substring(eqIndex + 1);
+                    wiseWords.remove(number);
+                    System.out.println(number + "번 명언이 삭제되었습니다.");
                 }
                 
                 if (operation.equals("종료")) {
