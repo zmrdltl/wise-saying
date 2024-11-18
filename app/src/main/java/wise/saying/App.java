@@ -60,6 +60,10 @@ public class App {
                 } else if (operation.startsWith("삭제")) {
                     Integer eqIndex = operation.indexOf("=");
                     String number = operation.substring(eqIndex + 1);
+                    if (wiseWords.get(number) == null) {
+                        System.out.println(number + "번 명언은 존재하지 않습니다.");
+                        continue;
+                    }
                     wiseWords.remove(number);
                     System.out.println(number + "번 명언이 삭제되었습니다.");
                 }
