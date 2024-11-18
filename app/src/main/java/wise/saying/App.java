@@ -66,6 +66,21 @@ public class App {
                     }
                     wiseWords.remove(number);
                     System.out.println(number + "번 명언이 삭제되었습니다.");
+                } else if (operation.startsWith("수정")) {
+                    Integer eqIndex = operation.indexOf("=");
+                    String number = operation.substring(eqIndex + 1);
+                    if (wiseWords.get(number) == null) {
+                        System.out.println(number + "번 명언은 존재하지 않습니다.");
+                        continue;
+                    }
+                    WiseWord currentWiseWord = wiseWords.get(number);
+                    System.out.println("명언(기존) : " + currentWiseWord.words);
+                    System.out.print("명언 : ");
+                    String newWords = scanner.next();
+                    System.out.println("작가(기존) : " + currentWiseWord.writer);
+                    System.out.print("작가 : ");
+                    String newWriter = scanner.next();
+                    wiseWords.put(number, app.new WiseWord(newWords, newWriter));
                 }
                 
                 if (operation.equals("종료")) {
