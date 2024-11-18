@@ -10,6 +10,7 @@ public class App {
     public static void main(String[] args) {
         App app = new App();
         app.start();
+        int sequence = 0;
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -22,8 +23,8 @@ public class App {
 
                 System.out.print("작가 : ");
                 String writer = scanner.next();
-
-                System.out.println("1번 명언이 등록되었습니다.");
+                sequence++;
+                System.out.println(sequence + "번 명언이 등록되었습니다.");
             }
             if (operation.equals("종료")) {
                 break;
