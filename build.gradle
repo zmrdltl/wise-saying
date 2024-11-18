@@ -1,0 +1,37 @@
+plugins {
+  id 'java-library' // Java 라이브러리 플러그인
+  id 'maven-publish' // Maven 게시 플러그인
+}
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17)) // Java 17 사용
+  }
+}
+
+repositories {
+  mavenCentral() // 중앙 저장소 사용
+}
+
+dependencies {
+  implementation 'com.google.code.gson:gson:2.10.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+}
+
+tasks.test {
+  useJUnitPlatform() // JUnit5 테스트 플랫폼 사용
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java // Maven 게시 설정
+    }
+  }
+  repositories {
+    // 로컬 Maven 리포지토리 설정
+    maven {
+      url = uri("${project.buildDir}/repos")
+    }
+  }
+}
