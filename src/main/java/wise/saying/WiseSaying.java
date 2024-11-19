@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WiseWord {
+public class WiseSaying {
   private Integer id;
   private String content;
   private String author;
