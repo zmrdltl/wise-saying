@@ -6,7 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
@@ -18,7 +20,18 @@ public class App {
     private static final String BASE_DIR = "db/wiseSaying/";
     private static final String LAST_ID_FILE = BASE_DIR + "lastId.txt";
 
-    private void saveWiseWord(int id, WiseWord wiseWord) {
+    private void buildWiseWordsIntoOneFile(HashMap<String, WiseWord> wiseWords) {
+        try (Writer writer = new FileWriter(BASE_DIR + "data.json")) {
+            List<WiseWord> wiseWordList = new ArrayList<>(wiseWords.values());
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(wiseWordList, writer);
+        } catch (Exception e) {
+            System.out.println("data.json 파일 저장 오류: " + e.getMessage());
+        }
+    }
+    
+    private void saveWiseWord(WiseWord wiseWord) {
+        int id = wiseWord.getId();
         try (Writer writer = new FileWriter(BASE_DIR + id + ".json")) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(wiseWord, writer);
@@ -66,8 +79,12 @@ public class App {
     
         for (File file : files) {
           try (FileReader reader = new FileReader(file)) {
-            WiseWord wiseWord = gson.fromJson(reader, WiseWord.class);
             String fileName = file.getName();
+            if (fileName.equals("data.json")) {
+              continue;
+            }
+            WiseWord wiseWord = gson.fromJson(reader, WiseWord.class);
+            
             wiseWords.put(fileName.substring(0, fileName.length() - 5), wiseWord);
           } catch (Exception e) {
             System.out.println("Failed to load file: " + file.getName() + " -> " + e.getMessage());
@@ -81,8 +98,6 @@ public class App {
         File file = new File(BASE_DIR + number + ".json");
         if (file.exists() && file.delete()) {
           System.out.println(number + ".json 파일이 삭제되었습니다.");
-        } else {
-          System.out.println(number + ".json 파일 삭제 실패.");
         }
     }
 
@@ -92,20 +107,26 @@ public class App {
     }
 
     public class WiseWord {
-        private String words;
-        private String writer;
+        private Integer id;
+        private String content;
+        private String author;
 
-        public WiseWord(String words, String writer) {
-            this.words = words;
-            this.writer = writer;
+        public WiseWord(Integer id, String content, String author) {
+            this.id = id;
+            this.content = content;
+            this.author = author;
         }
 
-        public String getWords() {
-            return words;
+        public Integer getId() {
+            return id;
         }
 
-        public String getWriter() {
-            return writer;
+        public String getContent() {
+            return content;
+        }
+
+        public String getAuthor() {
+            return author;
         }
     }
 
@@ -125,7 +146,7 @@ public class App {
                     System.out.print("작가 : ");
                     String writer = scanner.next();
                     sequence++;
-                    wiseWords.put(String.valueOf(sequence), app.new WiseWord(words, writer));
+                    wiseWords.put(String.valueOf(sequence), app.new WiseWord(sequence, words, writer));
                     System.out.println(sequence + "번 명언이 등록되었습니다.");
                 } else if (operation.equals("목록")) {
                     System.out.println("번호 / 작가 / 명언");
@@ -134,7 +155,7 @@ public class App {
                     for (Entry <String, WiseWord> entry : wiseWords.entrySet()) {
                         String number = entry.getKey();
                         WiseWord wiseWord = entry.getValue();
-                        System.out.println(number + " / " + wiseWord.getWriter() + " / " + wiseWord.getWords());
+                        System.out.println(number + " / " + wiseWord.getAuthor() + " / " + wiseWord.getContent());
                     }
                 } else if (operation.startsWith("삭제")) {
                     Integer eqIndex = operation.indexOf("=");
@@ -154,21 +175,24 @@ public class App {
                         continue;
                     }
                     WiseWord currentWiseWord = wiseWords.get(number);
-                    System.out.println("명언(기존) : " + currentWiseWord.words);
+                    System.out.println("명언(기존) : " + currentWiseWord.getContent());
                     System.out.print("명언 : ");
                     String newWords = scanner.next();
-                    System.out.println("작가(기존) : " + currentWiseWord.writer);
+                    System.out.println("작가(기존) : " + currentWiseWord.getAuthor());
                     System.out.print("작가 : ");
                     String newWriter = scanner.next();
-                    WiseWord updatedWiseWord = app.new WiseWord(newWords, newWriter);
+                    WiseWord updatedWiseWord = app.new WiseWord(Integer.valueOf(number), newWords, newWriter);
                     wiseWords.put(number, updatedWiseWord);
+                } else if (operation.equals("빌드")) {
+                    app.buildWiseWordsIntoOneFile(wiseWords);
+                    System.out.println("data.json 파일의 내용이 갱신되었습니다.");
                 }
                 
                 if (operation.equals("종료")) {
                     for (Entry <String, WiseWord> entry : wiseWords.entrySet()) {
                         String number = entry.getKey();
                         WiseWord wiseWord = entry.getValue();
-                        app.saveWiseWord(Integer.parseInt(number), wiseWord);
+                        app.saveWiseWord(wiseWord);
                     }
                     app.saveLastId(sequence);
                     break;
