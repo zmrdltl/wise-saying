@@ -15,7 +15,6 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
 public class App {
     private static final String BASE_DIR = "db/wiseSaying/";
     private static final String LAST_ID_FILE = BASE_DIR + "lastId.txt";
@@ -106,30 +105,6 @@ public class App {
         new File(BASE_DIR).mkdirs();
     }
 
-    public class WiseWord {
-        private Integer id;
-        private String content;
-        private String author;
-
-        public WiseWord(Integer id, String content, String author) {
-            this.id = id;
-            this.content = content;
-            this.author = author;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public String getAuthor() {
-            return author;
-        }
-    }
-
     public static void main(String[] args) {
         App app = new App();
         app.start();
@@ -146,7 +121,7 @@ public class App {
                     System.out.print("작가 : ");
                     String writer = scanner.next();
                     sequence++;
-                    wiseWords.put(String.valueOf(sequence), app.new WiseWord(sequence, words, writer));
+                    wiseWords.put(String.valueOf(sequence), new WiseWord(sequence, words, writer));
                     System.out.println(sequence + "번 명언이 등록되었습니다.");
                 } else if (operation.equals("목록")) {
                     System.out.println("번호 / 작가 / 명언");
@@ -181,7 +156,7 @@ public class App {
                     System.out.println("작가(기존) : " + currentWiseWord.getAuthor());
                     System.out.print("작가 : ");
                     String newWriter = scanner.next();
-                    WiseWord updatedWiseWord = app.new WiseWord(Integer.valueOf(number), newWords, newWriter);
+                    WiseWord updatedWiseWord = new WiseWord(Integer.valueOf(number), newWords, newWriter);
                     wiseWords.put(number, updatedWiseWord);
                 } else if (operation.equals("빌드")) {
                     app.buildWiseWordsIntoOneFile(wiseWords);
