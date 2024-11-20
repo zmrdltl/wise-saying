@@ -73,13 +73,13 @@ public class WiseSayingRepository {
 
     File directory = new File(Config.BASE_DIR);
     if (!directory.exists() || !directory.isDirectory()) {
-      System.out.println("Directory does not exist: " + Config.BASE_DIR);
+      System.out.println("해당 폴더가 존재하지 않습니다. : " + Config.BASE_DIR);
       return wiseWords;
     }
 
     File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
     if (files == null || files.length == 0) {
-      System.out.println("No JSON files found in directory: " + Config.BASE_DIR);
+      System.out.println("폴더 내 파일이 없습니다. : " + Config.BASE_DIR);
       return wiseWords;
     }
 
@@ -93,7 +93,7 @@ public class WiseSayingRepository {
         String fileNameExceptExtension = fileName.substring(0, fileName.indexOf("."));
         wiseWords.put(Integer.valueOf(fileNameExceptExtension), wiseWord);
       } catch (Exception e) {
-        System.out.println("Failed to load file: " + file.getName() + " -> " + e.getMessage());
+        System.out.println("파일을 로드할 수 없습니다. : " + file.getName() + " -> " + e.getMessage());
       }
     }
 
